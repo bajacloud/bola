@@ -1,6 +1,5 @@
-# checkov:skip=CKV_DOCKER_2: no need for healthcheck
 # Use the official Python image from the Docker Hub
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 # Set the working directory in the container
 WORKDIR /app
@@ -17,6 +16,8 @@ COPY . .
 # Expose port 5000 to the host
 EXPOSE 5000
 
-# Command to run the application
-CMD ["python", "app.py"]
+# Use entrypoint to ensure the container runs the app
+ENTRYPOINT ["python"]
+CMD ["app.py"]
+
 
