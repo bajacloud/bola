@@ -1,5 +1,4 @@
-from flask import Flask, request, jsonify, abort
-import json
+from flask import Flask, request, jsonify, abort, render_template, redirect, url_for
 
 app = Flask(__name__)
 
@@ -10,16 +9,28 @@ data = {
     3: {"user_id": 3, "name": "Charlie", "balance": 2000}
 }
 
-# Simple login to simulate user authentication
-@app.route('/login', methods=['POST'])
-def login():
-    auth = request.json
-    if auth.get('user_id') in data:
-        return jsonify({"message": "Login successful", "user_id": auth.get('user_id')})
-    return abort(401)
+@app.route('/')
+def index():
+    return redirect(url_for('login_page'))
 
-# Vulnerable endpoint
+@app.route('/login', methods=['GET', 'POST'])
+def login_page():
+    if request.method == 'POST':
+        user_id = int(request.form.get('user_id'))
+        if user_id in data:
+            return redirect(url_for('account_page', user_id=user_id))
+        return abort(401)
+    return render_template('login.html')
+
 @app.route('/account/<int:user_id>', methods=['GET'])
+def account_page(user_id):
+    if user_id in data:
+        user_data = data[user_id]
+        return render_template('account.html', name=user_data['name'], balance=user_data['balance'])
+    return abort(404)
+
+# Vulnerable endpoint for demonstration
+@app.route('/api/account/<int:user_id>', methods=['GET'])
 def get_account(user_id):
     if user_id in data:
         return jsonify(data[user_id])
