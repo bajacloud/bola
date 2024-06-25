@@ -1,0 +1,9 @@
+body {
+    padding-top: 4.5rem;
+}
+.navbar-brand {
+    font-weight: bold;
+}
+.card {
+    margin-top: 20px;
+}
